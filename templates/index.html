@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast Chat - AI-Powered Podcast Conversations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2B9D90;
+            --primary-dark: #238579;
+            --primary-light: #3eb8a9;
+            --primary-rgb: 43, 157, 144;
+            --orange: #f97316;
+            --orange-light: #fb923c;
+        }
+
+        /* Dark Theme (default) */
+        [data-theme="dark"] {
+            --bg-main: #0d0d0d;
+            --bg-card: #161616;
+            --bg-elevated: #1a1a1a;
+            --bg-input: #0a0a0a;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            --text: #e4e4e7;
+            --text-muted: #71717a;
+            --text-secondary: #a1a1aa;
+            --text-heading: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-main: #f5f5f5;
+            --bg-card: #ffffff;
+            --bg-elevated: #fafafa;
+            --bg-input: #f0f0f0;
+            --border: rgba(0, 0, 0, 0.1);
+            --border-hover: rgba(0, 0, 0, 0.2);
+            --text: #1f1f1f;
+            --text-muted: #6b7280;
+            --text-secondary: #4b5563;
+            --text-heading: #111111;
+            --success: #059669;
+            --warning: #d97706;
+            --error: #dc2626;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-main);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .brand-text span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        .theme-toggle span {
+            font-size: 16px;
+        }
+
+        .theme-toggle-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        [data-theme="light"] .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        /* Main Layout - Two Column */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            flex: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-heading);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Left Column - Transcript */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* YouTube Input Section */
+        .url-input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .url-input-section input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .url-input-section input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+        }
+
+        .url-input-section input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .url-input-section select {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* YouTube Preview */
+        .video-preview {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: var(--bg-input);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .video-preview iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-preview-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            gap: 12px;
+        }
+
+        .video-preview-placeholder span {
+            font-size: 48px;
+            opacity: 0.5;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .powered-by {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .powered-by-badge {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--bg-input);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .progress-percent {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+            background: rgba(var(--primary-rgb), 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), #10b981);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            width: 0%;
+            position: relative;
+            animation: shimmer 2s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: var(--bg-elevated);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.15);
+            transform: scale(1.02);
+        }
+
+        .progress-step.completed {
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .progress-step.completed::before {
+            content: '✓';
+            margin-right: 2px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, var(--orange), var(--orange-light));
+            color: white;
+        }
+
+        .btn-orange:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-input);
+            border-color: var(--border-hover);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Transcript Preview */
+        .transcript-section {
+            background: var(--bg-input);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transcript-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-elevated);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .transcript-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .transcript-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .transcript-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .transcript-content {
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+        }
+
+        .transcript-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .transcript-placeholder span {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Right Column - AI Features */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* AI Features Card */
+        .ai-features-card .card-header {
+            background: var(--bg-elevated);
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, var(--orange), var(--orange-light));
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .ai-search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .ai-search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .ai-search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .ai-search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+
+        /* Popular Features */
+        .popular-section {
+            background: rgba(var(--primary-rgb), 0.08);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        [data-theme="light"] .popular-section {
+            background: rgba(var(--primary-rgb), 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-header span {
+            font-size: 16px;
+        }
+
+        .popular-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .popular-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .popular-btn:hover {
+            background: rgba(var(--primary-rgb), 0.1);
+            border-color: var(--primary);
+        }
+
+        .popular-btn .icon {
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-input);
+            border-radius: 8px;
+        }
+
+        .popular-btn .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .popular-btn .desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Collapsible Sections */
+        .collapsible-section {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: var(--bg-elevated);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: var(--bg-input);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .collapsible-title span {
+            font-size: 18px;
+        }
+
+        .collapsible-title h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .collapsible-title small {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .collapsible-arrow {
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .collapsible-section.open .collapsible-arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible-section.open .collapsible-content {
+            max-height: 500px;
+        }
+
+        .collapsible-body {
+            padding: 16px;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px;
+        }
+
+        .feature-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            min-height: 70px;
+        }
+
+        .feature-btn:hover {
+            background: rgba(var(--primary-rgb), 0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .feature-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .feature-btn .icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .feature-btn .name {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        /* Chat Section */
+        .chat-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 14px;
+        }
+
+        .message.user {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message .sender {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input-area input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-input-area input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* AI Result Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: var(--text-heading);
+        }
+
+        .modal-close {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-elevated);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .ai-result-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .ai-result-text h1, .ai-result-text h2, .ai-result-text h3 {
+            color: var(--text-heading);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ai-result-text h1 { font-size: 1.5em; }
+        .ai-result-text h2 { font-size: 1.3em; }
+        .ai-result-text h3 { font-size: 1.1em; }
+
+        .ai-result-text p { margin-bottom: 12px; }
+
+        .ai-result-text strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .ai-result-text ul, .ai-result-text ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .ai-result-text li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .ai-result-text li::marker {
+            color: var(--primary);
+        }
+
+        .ai-result-text blockquote {
+            border-left: 3px solid var(--primary);
+            padding-left: 16px;
+            margin: 16px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .ai-result-text code {
+            background: var(--bg-input);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.9em;
+        }
+
+        .ai-result-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .ai-result-text th, .ai-result-text td {
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        .ai-result-text th {
+            background: var(--bg-input);
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+
+        .modal-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-actions button {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--error);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .top-bar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .popular-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .url-input-section {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 4px;
+            margin: 16px 16px 0 16px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            padding: 20px;
+        }
+
+        /* History List */
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .history-item {
+            padding: 16px;
+            background: var(--bg-input);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            border-color: rgba(var(--primary-rgb), 0.3);
+            background: rgba(var(--primary-rgb), 0.05);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .history-item-title {
+            font-weight: 600;
+            color: var(--text-heading);
+            font-size: 14px;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .history-item-status {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .history-item-status.transcribed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+        }
+
+        [data-theme="light"] .history-item-status.transcribed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #059669;
+        }
+
+        .history-item-status.downloaded {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fcd34d;
+        }
+
+        [data-theme="light"] .history-item-status.downloaded {
+            background: rgba(245, 158, 11, 0.2);
+            color: #d97706;
+        }
+
+        .history-item-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .history-item-preview {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .history-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .history-item-actions button {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        [data-theme="light"] .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-history span {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="brand">
+                <div class="brand-icon">🎙️</div>
+                <div class="brand-text">
+                    <h1>Podcast Chat</h1>
+                    <span>AI-Powered Conversations</span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span id="themeIcon">🌙</span>
+                    <span class="theme-toggle-text" id="themeText">Dark</span>
+                </div>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        {% if user.avatar_url %}
+                            <img src="{{ user.avatar_url }}" alt="Avatar">
+                        {% else %}
+                            {{ user.name[0].upper() if user.name else user.email[0].upper() }}
+                        {% endif %}
+                    </div>
+                    <span class="user-name">{{ user.name or user.email.split('@')[0] }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Left Column - Transcript -->
+            <div class="left-column">
+                <div class="card">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('download')">📥 Add Video</button>
+                        <button class="tab" onclick="switchTab('history')">📚 History</button>
+                    </div>
+                    
+                    <!-- Download Tab -->
+                    <div id="downloadTab" class="tab-content active">
+                        <!-- URL Input -->
+                        <div class="url-input-section">
+                            <input type="url" id="youtubeUrl" placeholder="Paste YouTube URL here...">
+                            <select id="language">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="hi">Hindi</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="it">Italian</option>
+                                <option value="multi">Auto-detect</option>
+                            </select>
+                        </div>
+
+                        <!-- YouTube Video Preview -->
+                        <div class="video-preview" id="videoPreview">
+                            <div class="video-preview-placeholder" id="videoPlaceholder">
+                                <span>🎬</span>
+                                <p>Paste a YouTube URL to preview</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn-orange" id="transcribeVideoBtn" onclick="transcribeVideo()">
+                                🎯 Transcribe Video
+                            </button>
+                            <div class="powered-by">
+                                <span class="powered-by-badge">Powered by Smallest AI</span>
+                            </div>
+                            <button class="btn-secondary" id="deleteBtn" onclick="deletePodcast()" style="display: none; margin-left: auto;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-header">
+                                <span class="progress-label" id="progressLabel">Preparing...</span>
+                                <span class="progress-percent" id="progressPercent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-steps">
+                                <span class="progress-step" id="stepDownload">📥 Download</span>
+                                <span class="progress-step" id="stepTranscribe">🎯 Transcribe</span>
+                                <span class="progress-step" id="stepComplete">✅ Complete</span>
+                            </div>
+                        </div>
+
+                        <div id="statusMessage"></div>
+
+                        <!-- Transcript Preview -->
+                        <div class="transcript-section" id="transcriptSection">
+                            <div class="transcript-header">
+                                <h3>📄 Transcript</h3>
+                                <div class="transcript-actions">
+                                    <button class="btn-secondary" onclick="copyTranscript()">📋 Copy</button>
+                                </div>
+                            </div>
+                            <div class="transcript-content" id="transcriptContent">
+                                <div class="transcript-placeholder">
+                                    <span>📝</span>
+                                    <p>Transcript will appear here after processing...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- History Tab -->
+                    <div id="historyTab" class="tab-content">
+                        <div id="historyList" class="history-list">
+                            <div class="empty-history">
+                                <span>📂</span>
+                                <p>No podcasts yet. Download your first podcast!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Chat & AI Features -->
+            <div class="right-column">
+                <!-- Chat Card -->
+                <div class="card chat-card">
+                    <div class="card-header">
+                        <h2>💬 Chat with Podcast</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message assistant">
+                                <div class="sender">Assistant</div>
+                                <div>Welcome! Download and transcribe a podcast, then ask me anything about its content.</div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInput" placeholder="Ask about the podcast..." onkeypress="handleChatKeyPress(event)" disabled>
+                            <button class="btn-primary" id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Features Card -->
+                <div class="card ai-features-card">
+                    <div class="card-header">
+                        <h2>✨ AI Features</h2>
+                    </div>
+                    <div class="card-body" id="aiFeaturesBody">
+                        <!-- Search -->
+                        <div class="ai-search-box">
+                            <input type="text" id="aiFeatureSearch" placeholder="Search AI features..." oninput="filterAIFeatures(this.value)">
+                        </div>
+
+                        <!-- Popular Features -->
+                        <div class="popular-section">
+                            <div class="section-header">
+                                <span>⭐</span> Popular Features
+                            </div>
+                            <div class="popular-grid">
+                                <div class="popular-btn" onclick="runAIFeature('summary')">
+                                    <div class="icon">📄</div>
+                                    <div>
+                                        <div class="name">Summary</div>
+                                        <div class="desc">Comprehensive overview</div>
+                                    </div>
+                                </div>
+                                <div class="popular-btn" onclick="runAIFeature('key_insights')">
+                                    <div class="icon">💡</div>
+                                    <div>
+                                        <div class="name">Key Insights</div>
+                                        <div class="desc">Main takeaways</div>
+                                    </div>
+                                </div>
+                                <div class="popular-btn" onclick="runAIFeature('clean_transcript')">
+                                    <div class="icon">✨</div>
+                                    <div>
+                                        <div class="name">Clean Transcript</div>
+                                        <div class="desc">Remove filler words</div>
+                                    </div>
+                                </div>
+                                <div class="popular-btn" onclick="runAIFeature('proper_notes')">
+                                    <div class="icon">📝</div>
+                                    <div>
+                                        <div class="name">Proper Notes</div>
+                                        <div class="desc">Comprehensive notes</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Basic Content - Collapsible -->
+                        <div class="collapsible-section" data-category="basic">
+                            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                                <div class="collapsible-title">
+                                    <span>📋</span>
+                                    <h3>Basic Content</h3>
+                                    <small>Summaries and transcripts</small>
+                                </div>
+                                <span class="collapsible-arrow">▼</span>
+                            </div>
+                            <div class="collapsible-content">
+                                <div class="collapsible-body">
+                                    <div class="feature-grid">
+                                        <div class="feature-btn" onclick="runAIFeature('clean_transcript')" data-feature="clean_transcript">
+                                            <div class="icon">✨</div>
+                                            <div class="name">Clean Transcript</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('micro_summary')" data-feature="micro_summary">
+                                            <div class="icon">📌</div>
+                                            <div class="name">Micro Summary</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('short_summary')" data-feature="short_summary">
+                                            <div class="icon">📝</div>
+                                            <div class="name">Short Summary</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('bullet_points')" data-feature="bullet_points">
+                                            <div class="icon">•</div>
+                                            <div class="name">Bullet Points</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('summary')" data-feature="summary">
+                                            <div class="icon">📄</div>
+                                            <div class="name">Summary</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('key_insights')" data-feature="key_insights">
+                                            <div class="icon">💡</div>
+                                            <div class="name">Key Insights</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('notable_quotes')" data-feature="notable_quotes">
+                                            <div class="icon">💬</div>
+                                            <div class="name">Notable Quotes</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis - Collapsible -->
+                        <div class="collapsible-section" data-category="analysis">
+                            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                                <div class="collapsible-title">
+                                    <span>🔬</span>
+                                    <h3>Analysis</h3>
+                                    <small>Deep insights and patterns</small>
+                                </div>
+                                <span class="collapsible-arrow">▼</span>
+                            </div>
+                            <div class="collapsible-content">
+                                <div class="collapsible-body">
+                                    <div class="feature-grid">
+                                        <div class="feature-btn" onclick="runAIFeature('extract_ideas')" data-feature="extract_ideas">
+                                            <div class="icon">💭</div>
+                                            <div class="name">Extract Ideas</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('extract_insights')" data-feature="extract_insights">
+                                            <div class="icon">🔍</div>
+                                            <div class="name">Extract Insights</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('extract_patterns')" data-feature="extract_patterns">
+                                            <div class="icon">🔄</div>
+                                            <div class="name">Extract Patterns</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('extract_wisdom')" data-feature="extract_wisdom">
+                                            <div class="icon">🦉</div>
+                                            <div class="name">Extract Wisdom</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Study & Education - Collapsible -->
+                        <div class="collapsible-section" data-category="study">
+                            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                                <div class="collapsible-title">
+                                    <span>📚</span>
+                                    <h3>Study & Education</h3>
+                                    <small>Learning and note-taking tools</small>
+                                </div>
+                                <span class="collapsible-arrow">▼</span>
+                            </div>
+                            <div class="collapsible-content">
+                                <div class="collapsible-body">
+                                    <div class="feature-grid">
+                                        <div class="feature-btn" onclick="runAIFeature('flashcards')" data-feature="flashcards">
+                                            <div class="icon">🗂️</div>
+                                            <div class="name">Flashcards</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('concept_map')" data-feature="concept_map">
+                                            <div class="icon">🗺️</div>
+                                            <div class="name">Concept Map</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('qa')" data-feature="qa">
+                                            <div class="icon">❓</div>
+                                            <div class="name">Q&A</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('outline_notes')" data-feature="outline_notes">
+                                            <div class="icon">📑</div>
+                                            <div class="name">Outline Notes</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('cornell_notes')" data-feature="cornell_notes">
+                                            <div class="icon">📓</div>
+                                            <div class="name">Cornell Notes</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('rapid_logging')" data-feature="rapid_logging">
+                                            <div class="icon">⚡</div>
+                                            <div class="name">Rapid Logging</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('t_note_method')" data-feature="t_note_method">
+                                            <div class="icon">📊</div>
+                                            <div class="name">T-Note Method</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('charting_method')" data-feature="charting_method">
+                                            <div class="icon">📈</div>
+                                            <div class="name">Charting Method</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('qec_method')" data-feature="qec_method">
+                                            <div class="icon">🎯</div>
+                                            <div class="name">QEC Method</div>
+                                        </div>
+                                        <div class="feature-btn" onclick="runAIFeature('qa_split_page')" data-feature="qa_split_page">
+                                            <div class="icon">📖</div>
+                                            <div class="name">Q&A Split Page</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Powered by <a href="https://smallest.ai" target="_blank">Smallest AI</a> & <a href="https://ollama.ai" target="_blank">Ollama</a></div>
+            <div>Press <kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; font-size: 11px;">Enter</kbd> to send</div>
+        </div>
+    </div>
+
+    <!-- AI Result Modal -->
+    <div class="modal-overlay" id="aiResultModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><span id="modalIcon">✨</span> <span id="modalTitle">AI Result</span></h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-result-text" id="modalResultText">Processing...</div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-meta" id="modalMeta">Processing time: --</div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="copyAIResult()">📋 Copy</button>
+                    <button class="btn-primary" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentPodcastId = null;
+        let currentAIResult = '';
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+
+        // Initialize theme
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeUI();
+
+        // Theme Toggle
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeUI();
+        }
+
+        function updateThemeUI() {
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            if (currentTheme === 'dark') {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark';
+            } else {
+                icon.textContent = '☀️';
+                text.textContent = 'Light';
+            }
+        }
+
+        // Collapsible Sections
+        function toggleCollapsible(header) {
+            const section = header.parentElement;
+            section.classList.toggle('open');
+        }
+
+        // YouTube URL handling
+        document.getElementById('youtubeUrl').addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            updateVideoPreview(url);
+        });
+
+        function extractVideoId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+                /youtube\.com\/shorts\/([^&\n?#]+)/
+            ];
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        function updateVideoPreview(url) {
+            const container = document.getElementById('videoPreview');
+            const placeholder = document.getElementById('videoPlaceholder');
+            const videoId = extractVideoId(url);
+
+            if (videoId) {
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>`;
+            } else {
+                container.innerHTML = `
+                    <div class="video-preview-placeholder" id="videoPlaceholder">
+                        <span>🎬</span>
+                        <p>Paste a YouTube URL to preview</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Progress Bar Functions
+        function updateProgress(percent, label, step) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressLabel').textContent = label;
+            
+            // Update step indicators
+            const steps = ['stepDownload', 'stepTranscribe', 'stepComplete'];
+            steps.forEach((s, i) => {
+                const el = document.getElementById(s);
+                el.classList.remove('active', 'completed');
+                if (i < step) el.classList.add('completed');
+                else if (i === step) el.classList.add('active');
+            });
+        }
+
+        function showProgress() {
+            document.getElementById('progressContainer').classList.add('active');
+        }
+
+        function hideProgress() {
+            document.getElementById('progressContainer').classList.remove('active');
+        }
+
+        // Transcribe Video (Download + Transcribe in one click)
+        async function transcribeVideo() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            if (!url) {
+                showStatus('Please enter a YouTube URL', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('transcribeVideoBtn');
+            const language = document.getElementById('language').value;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+            showProgress();
+
+            try {
+                // Step 1: Download (0% - 50%)
+                updateProgress(5, 'Starting download...', 0);
+                
+                const downloadResponse = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const downloadData = await downloadResponse.json();
+
+                if (!downloadData.success) {
+                    throw new Error(downloadData.error || 'Download failed');
+                }
+
+                currentPodcastId = downloadData.podcast_id;
+                document.getElementById('deleteBtn').style.display = 'inline-flex';
+                updateProgress(50, `Downloaded: ${downloadData.title}`, 1);
+
+                // Step 2: Transcribe (50% - 100%)
+                updateProgress(55, 'Starting transcription...', 1);
+
+                const transcribeResponse = await fetch(`/api/transcribe/${currentPodcastId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ language })
+                });
+
+                const transcribeData = await transcribeResponse.json();
+
+                if (!transcribeData.success) {
+                    throw new Error(transcribeData.error || 'Transcription failed');
+                }
+
+                updateProgress(100, 'Complete!', 2);
+                
+                document.getElementById('transcriptContent').innerHTML = `<div style="white-space: pre-wrap;">${escapeHtml(transcribeData.transcript)}</div>`;
+                document.getElementById('chatInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                showStatus(`Transcription complete! ${transcribeData.word_count} words.`, 'success');
+                addMessage('assistant', 'Podcast transcribed! You can now ask questions or use AI features.');
+
+                // Hide progress after a delay
+                setTimeout(() => {
+                    hideProgress();
+                }, 2000);
+
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                hideProgress();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🎯 Transcribe Video';
+            }
+        }
+
+        // Legacy functions kept for history tab
+        async function downloadAudio() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            if (!url) {
+                showStatus('Please enter a YouTube URL', 'error');
+                return;
+            }
+            await transcribeVideo(); // Just call the combined function
+        }
+
+        async function transcribeAudio() {
+            // This is now handled within transcribeVideo
+            // Kept for compatibility with history tab loadAndTranscribe
+            if (!currentPodcastId) {
+                showStatus('No podcast loaded', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('transcribeVideoBtn');
+            const language = document.getElementById('language').value;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Transcribing...';
+            showProgress();
+            updateProgress(50, 'Starting transcription...', 1);
+
+            try {
+                const response = await fetch(`/api/transcribe/${currentPodcastId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ language })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateProgress(100, 'Complete!', 2);
+                    document.getElementById('transcriptContent').innerHTML = `<div style="white-space: pre-wrap;">${escapeHtml(data.transcript)}</div>`;
+                    document.getElementById('chatInput').disabled = false;
+                    document.getElementById('sendBtn').disabled = false;
+                    showStatus(`Transcription complete! ${data.word_count} words.`, 'success');
+                    addMessage('assistant', 'Podcast transcribed! You can now ask questions or use AI features.');
+                    setTimeout(() => hideProgress(), 2000);
+                } else {
+                    throw new Error(data.error || 'Transcription failed');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                hideProgress();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🎯 Transcribe Video';
+            }
+        }
+
+        // Delete Podcast
+        async function deletePodcast() {
+            if (!currentPodcastId || !confirm('Delete this podcast?')) return;
+
+            try {
+                await fetch(`/api/podcast/${currentPodcastId}`, { method: 'DELETE' });
+                currentPodcastId = null;
+                document.getElementById('transcribeBtn').disabled = true;
+                document.getElementById('deleteBtn').style.display = 'none';
+                document.getElementById('chatInput').disabled = true;
+                document.getElementById('sendBtn').disabled = true;
+                document.getElementById('transcriptContent').innerHTML = `
+                    <div class="transcript-placeholder">
+                        <span>📝</span>
+                        <p>Transcript will appear here after processing...</p>
+                    </div>
+                `;
+                document.getElementById('videoPreview').innerHTML = `
+                    <div class="video-preview-placeholder">
+                        <span>🎬</span>
+                        <p>Paste a YouTube URL to preview</p>
+                    </div>
+                `;
+                document.getElementById('youtubeUrl').value = '';
+                showStatus('Podcast deleted', 'success');
+            } catch (error) {
+                showStatus('Error deleting podcast', 'error');
+            }
+        }
+
+        // Chat Functions
+        function addMessage(sender, text) {
+            const container = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = `message ${sender}`;
+            msg.innerHTML = `<div class="sender">${sender === 'user' ? 'You' : 'Assistant'}</div><div>${escapeHtml(text)}</div>`;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message || !currentPodcastId) return;
+
+            addMessage('user', message);
+            input.value = '';
+
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/chat/${currentPodcastId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                addMessage('assistant', data.success ? data.response : 'Error: ' + data.error);
+            } catch (error) {
+                addMessage('assistant', 'Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        // AI Features
+        const featureNames = {
+            'summary': 'Summary', 'key_insights': 'Key Insights', 'clean_transcript': 'Clean Transcript',
+            'proper_notes': 'Proper Notes', 'micro_summary': 'Micro Summary', 'short_summary': 'Short Summary',
+            'bullet_points': 'Bullet Points', 'notable_quotes': 'Notable Quotes', 'extract_ideas': 'Extract Ideas',
+            'extract_insights': 'Extract Insights', 'extract_patterns': 'Extract Patterns', 'extract_wisdom': 'Extract Wisdom',
+            'flashcards': 'Flashcards', 'concept_map': 'Concept Map', 'qa': 'Q&A', 'outline_notes': 'Outline Notes',
+            'cornell_notes': 'Cornell Notes', 'rapid_logging': 'Rapid Logging', 't_note_method': 'T-Note Method',
+            'charting_method': 'Charting Method', 'qec_method': 'QEC Method', 'qa_split_page': 'Q&A Split Page'
+        };
+
+        const featureIcons = {
+            'summary': '📄', 'key_insights': '💡', 'clean_transcript': '✨', 'proper_notes': '📝',
+            'micro_summary': '📌', 'short_summary': '📝', 'bullet_points': '•', 'notable_quotes': '💬',
+            'extract_ideas': '💭', 'extract_insights': '🔍', 'extract_patterns': '🔄', 'extract_wisdom': '🦉',
+            'flashcards': '🗂️', 'concept_map': '🗺️', 'qa': '❓', 'outline_notes': '📑',
+            'cornell_notes': '📓', 'rapid_logging': '⚡', 't_note_method': '📊', 'charting_method': '📈',
+            'qec_method': '🎯', 'qa_split_page': '📖'
+        };
+
+        async function runAIFeature(feature) {
+            if (!currentPodcastId) {
+                showStatus('Please transcribe a podcast first', 'error');
+                return;
+            }
+
+            // Show modal with loading
+            document.getElementById('modalIcon').textContent = featureIcons[feature] || '✨';
+            document.getElementById('modalTitle').textContent = featureNames[feature] || 'AI Feature';
+            document.getElementById('modalResultText').innerHTML = '<p style="color: var(--text-muted);">Processing with AI... This may take a moment.</p>';
+            document.getElementById('modalMeta').textContent = 'Processing...';
+            document.getElementById('aiResultModal').classList.add('active');
+            currentAIResult = '';
+
+            try {
+                const response = await fetch(`/api/ai-feature/${currentPodcastId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ feature })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentAIResult = data.result;
+                    document.getElementById('modalResultText').innerHTML = formatMarkdown(data.result);
+                    document.getElementById('modalMeta').textContent = `Processing time: ${data.processing_time}s`;
+                } else {
+                    document.getElementById('modalResultText').innerHTML = `<p style="color: var(--error);">Error: ${escapeHtml(data.error)}</p>`;
+                    document.getElementById('modalMeta').textContent = 'Failed';
+                }
+            } catch (error) {
+                document.getElementById('modalResultText').innerHTML = `<p style="color: var(--error);">Error: ${escapeHtml(error.message)}</p>`;
+                document.getElementById('modalMeta').textContent = 'Failed';
+            }
+        }
+
+        function filterAIFeatures(query) {
+            const q = query.toLowerCase().trim();
+            document.querySelectorAll('.feature-btn, .popular-btn').forEach(btn => {
+                const name = btn.querySelector('.name')?.textContent.toLowerCase() || '';
+                btn.style.display = name.includes(q) || !q ? '' : 'none';
+            });
+        }
+
+        // Modal Functions
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('aiResultModal').classList.remove('active');
+        }
+
+        function copyAIResult() {
+            if (!currentAIResult) return;
+            navigator.clipboard.writeText(currentAIResult).then(() => {
+                showStatus('Copied to clipboard!', 'success');
+            });
+        }
+
+        function copyTranscript() {
+            const content = document.getElementById('transcriptContent').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                showStatus('Transcript copied!', 'success');
+            });
+        }
+
+        // Utility Functions
+        function showStatus(message, type) {
+            const el = document.getElementById('statusMessage');
+            el.innerHTML = `<div class="status-message ${type}">${escapeHtml(message)}</div>`;
+            if (type !== 'error') setTimeout(() => el.innerHTML = '', 4000);
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds) return '--:--';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatMarkdown(text) {
+            if (!text) return '';
+            let html = escapeHtml(text);
+            
+            // Headers
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            
+            // Bold/Italic
+            html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            
+            // Code
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Lists
+            html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+            html = html.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+            
+            // Paragraphs
+            const paragraphs = html.split(/\n\n+/);
+            html = paragraphs.map(p => {
+                p = p.trim();
+                if (!p || p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<ol')) return p;
+                p = p.replace(/\n/g, '<br>');
+                return '<p>' + p + '</p>';
+            }).join('\n');
+            
+            return html;
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            if (tabName === 'history') loadHistory();
+        }
+
+        function switchTabByName(tabName) {
+            document.querySelectorAll('.tab').forEach((tab, i) => {
+                tab.classList.remove('active');
+                if ((tabName === 'download' && i === 0) || (tabName === 'history' && i === 1)) {
+                    tab.classList.add('active');
+                }
+            });
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // History Functions
+        async function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);"><span class="loading-spinner"></span> Loading...</div>';
+            
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                
+                if (data.history && data.history.length > 0) {
+                    historyList.innerHTML = data.history.map(podcast => `
+                        <div class="history-item" data-id="${podcast.id}">
+                            <div class="history-item-header">
+                                <div class="history-item-title">${escapeHtml(podcast.title)}</div>
+                                <span class="history-item-status ${podcast.status}">${podcast.status}</span>
+                            </div>
+                            <div class="history-item-meta">
+                                <span>⏱️ ${formatDuration(podcast.duration)}</span>
+                                ${podcast.file_size_mb ? `<span>📁 ${podcast.file_size_mb} MB</span>` : ''}
+                                ${podcast.has_transcript ? `<span>✓ Transcribed</span>` : `<span>⚠️ Not transcribed</span>`}
+                            </div>
+                            ${podcast.transcript_preview ? `<div class="history-item-preview">${escapeHtml(podcast.transcript_preview)}</div>` : ''}
+                            <div class="history-item-actions">
+                                ${podcast.has_transcript ? 
+                                    `<button class="btn-primary" onclick="loadFromHistory('${podcast.id}')">💬 Chat</button>` :
+                                    `<button class="btn-primary" onclick="loadAndTranscribe('${podcast.id}')">📝 Transcribe</button>`
+                                }
+                                <button class="btn-secondary btn-danger" onclick="deleteFromHistory('${podcast.id}')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    historyList.innerHTML = `
+                        <div class="empty-history">
+                            <span>📂</span>
+                            <p>No podcasts yet. Download your first podcast!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                historyList.innerHTML = `
+                    <div class="empty-history">
+                        <span>❌</span>
+                        <p>Error loading history. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadFromHistory(podcastId) {
+            try {
+                const response = await fetch(`/api/history/${podcastId}/load`, { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentPodcastId = data.podcast_id;
+                    switchTabByName('download');
+                    
+                    if (data.has_transcript) {
+                        document.getElementById('transcriptContent').innerHTML = `<div class="transcript-text">${escapeHtml(data.transcript)}</div>`;
+                        document.getElementById('chatInput').disabled = false;
+                        document.getElementById('sendBtn').disabled = false;
+                        addMessage('assistant', `Loaded "${data.title}" from history. You can now ask questions about it!`);
+                    }
+                    
+                    showStatus(`Loaded: ${data.title}`, 'success');
+                } else {
+                    showStatus(data.error || 'Failed to load podcast', 'error');
+                }
+            } catch (error) {
+                showStatus('Error loading podcast: ' + error.message, 'error');
+            }
+        }
+
+        async function loadAndTranscribe(podcastId) {
+            await loadFromHistory(podcastId);
+            if (currentPodcastId === podcastId) transcribeAudio();
+        }
+
+        async function deleteFromHistory(podcastId) {
+            if (!confirm('Are you sure you want to delete this podcast?')) return;
+            
+            try {
+                const response = await fetch(`/api/podcast/${podcastId}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (currentPodcastId === podcastId) {
+                        currentPodcastId = null;
+                        document.getElementById('transcriptContent').innerHTML = `
+                            <div class="transcript-placeholder">
+                                <span>📝</span>
+                                <p>Transcript will appear here after processing...</p>
+                            </div>
+                        `;
+                        document.getElementById('chatInput').disabled = true;
+                        document.getElementById('sendBtn').disabled = true;
+                    }
+                    loadHistory();
+                    showStatus('Podcast deleted', 'success');
+                } else {
+                    alert('Failed to delete: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error deleting podcast: ' + error.message);
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
