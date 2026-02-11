@@ -169,9 +169,22 @@ When reporting bugs, please include:
 Feature requests are welcome! Please:
 
 - Check existing issues first
+- Check the [Future Improvements](README.md#-future-improvements) roadmap
 - Describe the use case
 - Explain the expected behavior
 - Consider backward compatibility
+
+### Priority Areas for Contribution
+
+We especially welcome contributions in these areas:
+
+| Area | Examples |
+|------|----------|
+| **Cloud LLM support** | OpenAI, Groq, Together.ai integration |
+| **Export options** | PDF, DOCX, SRT subtitle generation |
+| **Speaker diarization** | Integrate Pulse STT speaker ID |
+| **Database** | PostgreSQL adapter for production |
+| **Deployment** | Docker Compose, Railway/Render configs |
 
 ## Security
 

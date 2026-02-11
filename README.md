@@ -254,6 +254,49 @@ pip install -r requirements.txt
 
 ---
 
+## ⚠️ Known Limitations
+
+| Limitation | Details | Workaround |
+|------------|---------|------------|
+| **Local-only deployment** | Cannot deploy to serverless platforms (Vercel, Netlify) due to timeout limits and ephemeral storage | Use Railway, Render, or self-hosted VPS |
+| **Long transcription times** | Podcasts >1 hour may take 5-15 minutes to transcribe | Progress bar shows status; smart chunking optimizes processing |
+| **Ollama required locally** | AI chat features need Ollama running on the same machine | Install Ollama or use cloud LLM API (future improvement) |
+| **YouTube only** | Currently only supports YouTube URLs | Other platforms planned for future |
+| **Single-user SQLite** | SQLite may have issues with high concurrent users | Switch to PostgreSQL for production |
+| **No speaker diarization** | Transcripts don't identify different speakers | Use Pulse STT speaker diarization API (future) |
+| **English-optimized AI** | AI features work best with English transcripts | Multi-language prompts planned |
+
+---
+
+## 🔮 Future Improvements
+
+### High Priority
+- [ ] **Cloud LLM support** — Option to use OpenAI, Groq, or Together.ai instead of local Ollama
+- [ ] **Speaker diarization** — Identify and label different speakers in podcast
+- [ ] **Export options** — Download transcripts as PDF, DOCX, or SRT subtitles
+- [ ] **Real-time transcription** — Live transcription as audio plays
+
+### Medium Priority
+- [ ] **Playlist support** — Transcribe entire YouTube playlists
+- [ ] **Audio file upload** — Support direct MP3/WAV file uploads
+- [ ] **Podcast RSS feeds** — Import directly from podcast RSS URLs
+- [ ] **Timestamp navigation** — Click on transcript to jump to video position
+- [ ] **PostgreSQL support** — Production-ready database for multiple users
+- [ ] **Docker deployment** — One-command deployment with Docker Compose
+
+### Nice to Have
+- [ ] **Mobile responsive** — Optimized layout for phones/tablets
+- [ ] **Collaborative notes** — Share transcriptions with team members
+- [ ] **API endpoints** — REST API for programmatic access
+- [ ] **Webhook notifications** — Get notified when transcription completes
+- [ ] **Custom AI prompts** — Let users create their own AI features
+- [ ] **Browser extension** — Transcribe YouTube videos with one click
+
+### Community Requested
+*Open an issue to suggest features!*
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
