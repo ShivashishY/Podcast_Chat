@@ -102,6 +102,8 @@ else
     # Add SECRET_KEY if not present
     if ! grep -q "SECRET_KEY" "$SCRIPT_DIR/.env"; then
         SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+        # Ensure file ends with newline before appending
+        [ -n "$(tail -c1 "$SCRIPT_DIR/.env")" ] && echo "" >> "$SCRIPT_DIR/.env"
         echo "SECRET_KEY=$SECRET" >> "$SCRIPT_DIR/.env"
         echo -e "${GREEN}✓ Added SECRET_KEY to .env${NC}"
     fi

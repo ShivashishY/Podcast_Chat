@@ -438,12 +438,12 @@ def download_youtube_audio(url: str, output_path: Path) -> dict:
 def transcribe_audio(file_path: str, language: str = "en") -> dict:
     """Transcribe audio using Smallest AI Pulse API, handling large files by chunking
     
-    Chunk sizes are dynamically adjusted based on audio duration:
+    Audio is compressed to mono 16kHz to reduce file size, then chunked based on duration:
     - < 3 min: Single chunk (no splitting)
     - 3-10 min: 3-minute chunks
     - 10-30 min: 5-minute chunks
     - 30-60 min: 7-minute chunks
-    - > 60 min: 10-minute chunks
+    - > 60 min: 5-minute chunks (more chunks but reliable)
     """
     if not SMALLEST_API_KEY:
         raise ValueError("SMALLEST_API_KEY environment variable not set")
@@ -455,6 +455,11 @@ def transcribe_audio(file_path: str, language: str = "en") -> dict:
     audio = AudioSegment.from_wav(file_path)
     duration_s = len(audio) / 1000  # Duration in seconds
     duration_ms = len(audio)
+    
+    # Compress audio: convert to mono 16kHz for smaller file size
+    # This is key to avoiding "Audio data too large" errors
+    audio = audio.set_channels(1).set_frame_rate(16000)
+    logger.info(f"Compressed audio to mono 16kHz")
     
     # Dynamically determine chunk size based on total duration
     if duration_s <= 180:  # < 3 minutes
@@ -470,16 +475,29 @@ def transcribe_audio(file_path: str, language: str = "en") -> dict:
         max_chunk_ms = 7 * 60 * 1000  # 7-minute chunks
         logger.info(f"Very long audio ({duration_s:.1f}s) - using 7-minute chunks")
     else:  # > 60 minutes
-        max_chunk_ms = 10 * 60 * 1000  # 10-minute chunks
-        logger.info(f"Extra long audio ({duration_s:.1f}s) - using 10-minute chunks")
+        max_chunk_ms = 5 * 60 * 1000  # 5-minute chunks (more reliable for very long)
+        logger.info(f"Extra long audio ({duration_s:.1f}s) - using 5-minute chunks")
     
     if duration_ms <= max_chunk_ms:
         # Small file, transcribe directly
         logger.info(f"Transcribing single chunk ({duration_s:.1f}s)")
-        return transcribe_chunk(file_path, language)
+        
+        # Save compressed audio to temp file
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmp:
+            audio.export(tmp.name, format='wav')
+            tmp_path = tmp.name
+        
+        try:
+            return transcribe_chunk(tmp_path, language)
+        finally:
+            try:
+                os.remove(tmp_path)
+            except:
+                pass
     
     # Large file, split into chunks
-    logger.info(f"Audio is {duration_ms/1000:.1f}s, splitting into chunks...")
+    num_chunks = int(duration_ms / max_chunk_ms) + 1
+    logger.info(f"Audio is {duration_s:.1f}s, splitting into ~{num_chunks} chunks...")
     
     chunks = []
     start = 0
@@ -503,7 +521,7 @@ def transcribe_audio(file_path: str, language: str = "en") -> dict:
     for i, chunk in enumerate(chunks):
         logger.info(f"Transcribing chunk {i+1}/{len(chunks)}...")
         
-        # Save chunk to temp file
+        # Save chunk to temp file (already compressed)
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmp:
             chunk.export(tmp.name, format='wav')
             tmp_path = tmp.name
