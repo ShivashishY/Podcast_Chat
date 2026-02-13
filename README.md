@@ -9,6 +9,17 @@
 
 ---
 
+## 🎨 Screenshots
+
+<div align="center">
+
+| Dark Mode | Light Mode |
+|-----------|------------|
+| ![Dark Mode](templates/darkmode.png) | ![Light Mode](templates/lightmode.png) |
+
+</div>
+---
+
 ## ✨ Features
 
 | Feature | Description |
