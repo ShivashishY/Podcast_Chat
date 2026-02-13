@@ -18,7 +18,6 @@
 | ![Dark Mode](templates/darkmode.png) | ![Light Mode](templates/lightmode.png) |
 
 </div>
----
 
 ## ✨ Features
 
