@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.3+-green?style=flat-square&logo=flask)](https://flask.palletsprojects.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
-[![AI](https://img.shields.io/badge/AI-Ollama%20%2B%20Smallest-teal?style=flat-square)](https://ollama.ai)
+[![AI](https://img.shields.io/badge/AI-Ollama%20%2B%20Smallest-teal?style=flat-square)](https://smallest.ai/)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/podcast-chat.git
+git clone https://github.com/ShivashishY/Podcast_Chat.git
 cd podcast-chat
 
 # Create virtual environment
