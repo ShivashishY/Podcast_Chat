@@ -13,16 +13,16 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🎬 **YouTube Download** | Paste any YouTube URL with live video preview |
-| 🎯 **One-Click Transcribe** | Single "Transcribe Video" button downloads and transcribes automatically |
-| 📊 **Progress Tracking** | Beautiful animated progress bar showing download and transcription status |
-| 💬 **Intelligent Chat** | Ask questions and get contextual answers from podcast content |
-| ✨ **20+ AI Features** | Summary, flashcards, Q&A, notes, insights, and more — all powered by Ollama |
-| 📚 **History Management** | Save and revisit your transcribed podcasts with History tab |
-| 🌙 **Dark/Light Mode** | Toggle between dark and light themes with persistent preference |
-| 🔐 **User Authentication** | Secure email-based login with per-user history |
-| 🌐 **Multi-language** | English, Spanish, French, German, Hindi, Portuguese, Italian |
-| ⚡ **Smart Chunking** | Dynamic audio chunking based on video length for optimal processing |
+| **YouTube Download** | Paste any YouTube URL with live video preview |
+| **One-Click Transcribe** | Single "Transcribe Video" button downloads and transcribes automatically |
+| **Progress Tracking** | Beautiful animated progress bar showing download and transcription status |
+| **Intelligent Chat** | Ask questions and get contextual answers from podcast content |
+| **20+ AI Features** | Summary, flashcards, Q&A, notes, insights, and more — all powered by Ollama |
+| **History Management** | Save and revisit your transcribed podcasts with History tab |
+| **Dark/Light Mode** | Toggle between dark and light themes with persistent preference |
+| **User Authentication** | Secure email-based login with per-user history |
+| **Multi-language** | English, Spanish, French, German, Hindi, Portuguese, Italian |
+| **Smart Chunking** | Dynamic audio chunking based on video length for optimal processing |
 
 ---
 
@@ -32,8 +32,8 @@
 
 - **macOS** 10.15+, **Windows** 10/11, or **Linux** (Ubuntu 20.04+)
 - **Python** 3.10+
-- **FFmpeg** (auto-installs on macOS, manual on Windows/Linux)
-- **Ollama** (auto-installs on macOS, manual on Windows/Linux)
+- **FFmpeg** (auto-installed on macOS, manual on Windows/Linux)
+- **Ollama** (auto-installed on macOS, manual on Windows/Linux)
 
 ### Installation
 
@@ -128,17 +128,12 @@ After transcription, access the AI Features panel with collapsible categories:
 | `OLLAMA_URL` | No | `localhost:11434` | Ollama server URL |
 | `OLLAMA_MODEL` | No | `llama3.2` | LLM model to use |
 
-### Dynamic Chunk Sizing
+### Smart Audio Processing
 
-The app automatically adjusts transcription chunk sizes based on video length:
-
-| Video Duration | Chunk Size |
-|----------------|------------|
-| < 3 minutes | No chunking |
-| 3-10 minutes | 3 min chunks |
-| 10-30 minutes | 5 min chunks |
-| 30-60 minutes | 7 min chunks |
-| > 60 minutes | 10 min chunks |
+The app handles any length video by:
+- Compressing audio to mono 16kHz for efficient processing
+- Splitting into 60-second chunks to stay under API limits
+- Seamlessly stitching transcripts with accurate timestamps
 
 ---
 
@@ -179,12 +174,12 @@ Modern two-column layout with dark/light mode support:
 | Text | `#e4e4e7` | `#1f1f1f` |
 
 **UI Highlights:**
-- 🌙 Dark/Light mode toggle with persistent preference
-- 📺 YouTube video preview in left column
-- 📊 Animated progress bar with step indicators
-- 📁 Collapsible AI feature categories
-- 📚 History tab for past transcriptions
-- 💬 Chat + AI features in right column
+- Dark/Light mode toggle with persistent preference
+- YouTube video preview in left column
+- Animated progress bar with step indicators
+- Collapsible AI feature categories
+- History tab for past transcriptions, which can be reused without processing again
+- Chat + AI features in right column
 
 ---
 
@@ -254,49 +249,6 @@ pip install -r requirements.txt
 
 ---
 
-## ⚠️ Known Limitations
-
-| Limitation | Details | Workaround |
-|------------|---------|------------|
-| **Local-only deployment** | Cannot deploy to serverless platforms (Vercel, Netlify) due to timeout limits and ephemeral storage | Use Railway, Render, or self-hosted VPS |
-| **Long transcription times** | Podcasts >1 hour may take 5-15 minutes to transcribe | Progress bar shows status; smart chunking optimizes processing |
-| **Ollama required locally** | AI chat features need Ollama running on the same machine | Install Ollama or use cloud LLM API (future improvement) |
-| **YouTube only** | Currently only supports YouTube URLs | Other platforms planned for future |
-| **Single-user SQLite** | SQLite may have issues with high concurrent users | Switch to PostgreSQL for production |
-| **No speaker diarization** | Transcripts don't identify different speakers | Use Pulse STT speaker diarization API (future) |
-| **English-optimized AI** | AI features work best with English transcripts | Multi-language prompts planned |
-
----
-
-## 🔮 Future Improvements
-
-### High Priority
-- [ ] **Cloud LLM support** — Option to use OpenAI, Groq, or Together.ai instead of local Ollama
-- [ ] **Speaker diarization** — Identify and label different speakers in podcast
-- [ ] **Export options** — Download transcripts as PDF, DOCX, or SRT subtitles
-- [ ] **Real-time transcription** — Live transcription as audio plays
-
-### Medium Priority
-- [ ] **Playlist support** — Transcribe entire YouTube playlists
-- [ ] **Audio file upload** — Support direct MP3/WAV file uploads
-- [ ] **Podcast RSS feeds** — Import directly from podcast RSS URLs
-- [ ] **Timestamp navigation** — Click on transcript to jump to video position
-- [ ] **PostgreSQL support** — Production-ready database for multiple users
-- [ ] **Docker deployment** — One-command deployment with Docker Compose
-
-### Nice to Have
-- [ ] **Mobile responsive** — Optimized layout for phones/tablets
-- [ ] **Collaborative notes** — Share transcriptions with team members
-- [ ] **API endpoints** — REST API for programmatic access
-- [ ] **Webhook notifications** — Get notified when transcription completes
-- [ ] **Custom AI prompts** — Let users create their own AI features
-- [ ] **Browser extension** — Transcribe YouTube videos with one click
-
-### Community Requested
-*Open an issue to suggest features!*
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
@@ -315,7 +267,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Powered By
 
-- **[Smallest AI](https://smallest.ai)** — Pulse STT for transcription
+- **[Smallest AI](https://smallest.ai)** — Pulse STT for transcription (displayed as "Powered by Smallest AI" badge)
 - **[Ollama](https://ollama.ai)** — Local AI inference for chat & 20+ AI features
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** — YouTube downloads
 - **[Flask](https://flask.palletsprojects.com)** — Web framework
@@ -325,7 +277,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
   Made with ❤️ for podcast lovers
   <br><br>
-  <a href="https://github.com/yourusername/podcast-chat/issues">Report Bug</a>
+  <a href="https://github.com/ShivashishY/podcast-chat/issues">Report Bug</a>
   ·
-  <a href="https://github.com/yourusername/podcast-chat/issues">Request Feature</a>
+  <a href="https://github.com/ShivashishY/podcast-chat/issues">Request Feature</a>
 </p>
