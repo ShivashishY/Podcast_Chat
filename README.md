@@ -277,7 +277,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
   Made with ❤️ for podcast lovers
   <br><br>
-  <a href="https://github.com/ShivashishY/podcast-chat/issues">Report Bug</a>
+  <a href="https://github.com/ShivashishY/Podcast_Chat/issues">Report Bug</a>
   ·
-  <a href="https://github.com/ShivashishY/podcast-chat/issues">Request Feature</a>
+  <a href="https://github.com/ShivashishY/Podcast_Chat/issues">Request Feature</a>
 </p>
